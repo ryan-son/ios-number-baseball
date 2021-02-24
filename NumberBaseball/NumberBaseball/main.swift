@@ -67,6 +67,7 @@ class BaseballGame {
                 }
             }
             
+            // 출력부분
             print("----------------")
             if answerNumbers == tryNumbers {
                 print("임의의 수 :", terminator: " ")
