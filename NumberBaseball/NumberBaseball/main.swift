@@ -7,7 +7,7 @@
 import Foundation
 
 // 전역 변수 생성 (게임 중 사용자 입력, 정답 숫자, 잔여 시도 횟수)
-var threeNumbersInputByUserForNumberBaseballGame = [Int]()
+var threeNumbersInputByUser = [Int]()
 var answerNumbers = [Int]()
 var remainingTryCount: Int = 9
 
@@ -37,25 +37,25 @@ class NumberBaseballGame {
     }
 
     // 숫자야구게임 수행을 위해 사용자가 입력한 내용의 유효성 검사 및 공백으로 이루어진 입력을 정수 배열로 바꾸는 전처리를 수행하는 함수
-    func getAndPreprocessThreeNumbersInputByUserForNumberBaseballGame() -> [Int] {
-        var preprocessedUserInputForNumberBaseballGame = [Int]()
-        while preprocessedUserInputForNumberBaseballGame.count != 3 {
-            preprocessedUserInputForNumberBaseballGame = []
+    func getAndPreprocessThreeNumbersInputByUser() -> [Int] {
+        var preprocessedThreeNumbersInputByUser = [Int]()
+        while preprocessedThreeNumbersInputByUser.count != 3 {
+            preprocessedThreeNumbersInputByUser = []
             print("숫자 3개를 띄어쓰기로 구분하여 입력해주세요.\n중복 숫자는 허용하지 않습니다.")
             print("입력 :", terminator: " ")
-            if let rawUserInputForNumberBaseballGame: String = readLine() {
-                let stringElementsUserInputForNumberBaseballGame: [String] = rawUserInputForNumberBaseballGame.split(separator: " ").map { String($0) }
-                for index in stringElementsUserInputForNumberBaseballGame {
-                    if let integerElementUserInput: Int = Int(index) {
-                        preprocessedUserInputForNumberBaseballGame.append(integerElementUserInput)
+            if let rawThreeNumbersInputByUser: String = readLine() {
+                let preprocessingThreeNumbersInputByUser: [String] = rawThreeNumbersInputByUser.split(separator: " ").map { String($0) }
+                for index in preprocessingThreeNumbersInputByUser {
+                    if let oneIntegerElementFromPreprocessingThreeNumbersInputByUser: Int = Int(index) {
+                        preprocessedThreeNumbersInputByUser.append(oneIntegerElementFromPreprocessingThreeNumbersInputByUser)
                     }
                 }
             }
-            if preprocessedUserInputForNumberBaseballGame.count != 3 {
+            if preprocessedThreeNumbersInputByUser.count != 3 {
                 print("입력이 잘못되었습니다.")
             }
         }
-        return preprocessedUserInputForNumberBaseballGame
+        return preprocessedThreeNumbersInputByUser
     }
 
     // 중복되지 않는 임의의 정수 3개 생성 함수
@@ -104,11 +104,11 @@ class NumberBaseballGame {
         remainingTryCount = 9
         answerNumbers = generateThreeRandomUniqueNumbers()
         while remainingTryCount != 0 {
-            threeNumbersInputByUserForNumberBaseballGame = getAndPreprocessThreeNumbersInputByUserForNumberBaseballGame()
-            let ResultOfCheckStrikeOrBall: [Int] = checkStrikeOrBall(threeNumbersToCheckStrikeOrBall: threeNumbersInputByUserForNumberBaseballGame)
+            threeNumbersInputByUser = getAndPreprocessThreeNumbersInputByUser()
+            let ResultOfCheckStrikeOrBall: [Int] = checkStrikeOrBall(threeNumbersToCheckStrikeOrBall: threeNumbersInputByUser)
             let strikeCountIndexInResultOfCheckStrikeOrBall: Int = 0
             printRemainingTryCountOrWhoWins(strikeCount: ResultOfCheckStrikeOrBall[strikeCountIndexInResultOfCheckStrikeOrBall], remainingTryCount: remainingTryCount)
-            if threeNumbersInputByUserForNumberBaseballGame == answerNumbers {
+            if threeNumbersInputByUser == answerNumbers {
                 break
             }
         }
