@@ -6,93 +6,74 @@
 
 import Foundation
 
-// 빈 배열 생성
-var answerNumbers:[Int] = []
-var tryNumbers:[Int] = []
+// 전역 변수 생성 (게임 중 사용자 입력, 정답 숫자, 잔여 시도 횟수)
+var userGameInput = [Int]()
+var answerNumbers = [Int]()
+var tryCount: Int = 9
 
-// 전역변수
-var firstNum:Int = 0
-var secondNum:Int = 0
-var thirdNum:Int = 0
-var cnt = 9
 
-class BaseballGame {
-    func start() {
-        // 3개의 랜덤숫자 생성함수
-        func makeRandomNumber() -> [Int] {
-            var threeNumArr:[Int] = []
-            
-            firstNum = Int.random(in: 1...9)
-            threeNumArr.append(firstNum)
-            
-            while true {
-                secondNum = Int.random(in: 1...9)
-                if firstNum == secondNum {
-                    continue
-                } else {
-                    threeNumArr.append(secondNum)
-                    break
-                }
-            }
-            
-            while true {
-                thirdNum = Int.random(in: 1...9)
-                if thirdNum == firstNum || thirdNum == secondNum {
-                    continue
-                } else {
-                    threeNumArr.append(thirdNum)
-                    break
-                }
-            }
-            return threeNumArr
-        }
-        
-        // 정답용, 3개의 랜덤숫자 생성함수 호출
-        answerNumbers = makeRandomNumber()
-        
-        // 기회는 9번
-        while cnt != 0 {
-            cnt -= 1
-            var strikeCount = 0
-            var ballCount = 0
-            
-            // 시도용, 3개의 랜덤숫자 생성함수 호출
-            tryNumbers = makeRandomNumber()
-            
-            for i in 0...2 {
-                if tryNumbers[i] == answerNumbers[i] {
-                    strikeCount += 1
-                } else if answerNumbers.contains(tryNumbers[i]) {
-                    ballCount += 1
-                }
-            }
-            
-            // 출력부분
-            print("----------------")
-            if answerNumbers == tryNumbers {
-                print("임의의 수 :", terminator: " ")
-                for i in 0...2 {
-                    print("\(tryNumbers[i])", terminator: " ")
-                }
-                print("")
-                print("정답 : \(answerNumbers)")
-                print("정답입니다!")
-                break
+class NumberBaseballGame {
+    // 중복되지 않는 임의의 정수 3개 생성 함수
+    func generateThreeRandomUniqueNumbers() -> [Int] {
+        var temporaryArray = [Int]()
+
+        while temporaryArray.count < 3 {
+            let randomNumber: Int = Int.random(in: 1...9)
+            if temporaryArray.contains(randomNumber) {
+                continue
             } else {
-                print("임의의 수 :", terminator: " ")
-                for i in 0...2 {
-                    print("\(tryNumbers[i])", terminator: " ")
-                }
-                print("")
-                print("\(strikeCount) 스트라이크, \(ballCount) 볼")
-                print("남은 기회 : \(cnt)")
-                if cnt == 0 {
-                    print("컴퓨터 승리...!")
-                }
+                temporaryArray.append(randomNumber)
             }
         }
+        return temporaryArray
+    }
+
+    // 스트라이크, 볼, 사용자 승리, 컴퓨터 승리 판단 및 출력 함수
+    func strikeOrBall(threeNumberArray: [Int]) {
+        var strikeCounter = 0
+        var ballCounter = 0
+        tryCount -= 1
+
+        for i in 0...2 {
+            if threeNumberArray[i] == answerNumbers[i] {
+                strikeCounter += 1
+            } else if answerNumbers.contains(threeNumberArray[i]) {
+                ballCounter += 1
+            }
+        }
+        
+        print("임의의 수 :",terminator: " ")
+        for i in 0...2 {
+            print("\(userGameInput[i])", terminator: " ")
+        }
+        print("")
+
+        print("\(strikeCounter) 스트라이크, \(ballCounter) 볼")
+        
+        if strikeCounter == 3 {
+            print("사용자 승리...!")
+        } else if tryCount == 0 {
+            print("컴퓨터 승리...!")
+        } else {
+            print("남은 기회 : \(tryCount)")
+        }
+        print("---------------")
+    }
+
+    // 게임 시작 함수
+    func gameStart() {
+        answerNumbers = generateThreeRandomUniqueNumbers()
+
+        while tryCount != 0 {
+            userGameInput = generateThreeRandomUniqueNumbers()
+            strikeOrBall(threeNumberArray: userGameInput)
+            if userGameInput == answerNumbers {
+                break
+            }
+        }
+        
     }
 }
 
-BaseballGame().start()
-
+let numberBaseballGame = NumberBaseballGame()
+numberBaseballGame.gameStart()
