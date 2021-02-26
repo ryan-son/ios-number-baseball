@@ -1,31 +1,74 @@
 //
 //  NumberBaseball - main.swift
-//  Created by yagom. 
+//  Created by yagom.
 //  Copyright © yagom academy. All rights reserved.
-// 
+//
 
 import Foundation
 
-// 전역 변수 생성 (게임 중 사용자 입력, 정답 숫자, 잔여 시도 횟수)
-var threeNumbersInputByUser = [Int]()
+var threeNumbersInput = [Int]()
 var answerNumbers = [Int]()
+var remainingTryCount: Int = 9
 
 class NumberBaseballGame {
-    // 메뉴 출력 함수
-    func printMenu() {
+    /// 중복되지 않는 임의의 정수 3개 생성 함수
+    func generateThreeRandomUniqueNumbers() -> [Int] {
+        var threeRandomUiqueNumbers = [Int]()
+        
+        while threeRandomUiqueNumbers.count < 3 {
+            let randomNumber: Int = Int.random(in: 1...9)
+            if threeRandomUiqueNumbers.contains(randomNumber) {
+                continue
+            } else {
+                threeRandomUiqueNumbers.append(randomNumber)
+            }
+        }
+        return threeRandomUiqueNumbers
+    }
+    
+    /// 스트라이크, 볼, 사용자 승리, 컴퓨터 승리 판단 및 출력 함수
+    func checkStrikeOrBall(of: [Int]) -> Int {
+        var strikeCount = 0
+        var ballCount = 0
+        remainingTryCount -= 1
+        
+        for index in 0...2 {
+            if of[index] == answerNumbers[index] {
+                strikeCount += 1
+            } else if answerNumbers.contains(threeNumbersInput[index]) {
+                ballCount += 1
+            }
+        }
+        
+        print("\(strikeCount) 스트라이크, \(ballCount) 볼")
+        return strikeCount
+    }
+    
+    /// remainingTryCount 또는 승자를 출력하는 함수
+    func printGameStatueOrWinner(strikeCount: Int, remainingTryCount: Int) {
+        if strikeCount == 3 {
+            print("사용자 승리...!")
+        } else if remainingTryCount == 0 {
+            print("컴퓨터 승리...!")
+        } else {
+            print("남은 기회 : \(remainingTryCount)")
+        }
+    }
+    
+    /// 메뉴 선택하는 함수
+    func printGameMenu() {
         print("""
                 1. 게임 시작
                 2. 게임 종료
                 원하는 기능을 선택해주세요 :
                 """, terminator: " ")
     }
-
-    // 메뉴 선택 시 사용자 입력의 유효성 검사 및 메뉴 이동을 수행하는 함수
-    func selectMenu() {
+    
+    func selectGameMenu() {
         while true {
-            printMenu()
-            if let menuSelectedByUser: String = readLine() {
-                switch menuSelectedByUser {
+            printGameMenu()
+            if let selectedMenuNumber: String = readLine() {
+                switch selectedMenuNumber {
                 case "1": startGame()
                 case "2": return
                 default:
@@ -34,80 +77,40 @@ class NumberBaseballGame {
             }
         }
     }
-
-    // 숫자야구게임 수행을 위해 사용자가 입력한 내용의 유효성 검사 및 공백으로 이루어진 입력을 정수 배열로 바꾸는 전처리를 수행하는 함수
-    func getAndPreprocessThreeNumbersInputByUser() -> [Int] {
-        var preprocessedThreeNumbersInputByUser = [Int]()
-        while preprocessedThreeNumbersInputByUser.count != 3 {
-            preprocessedThreeNumbersInputByUser = []
-            print("숫자 3개를 띄어쓰기로 구분하여 입력해주세요.\n중복 숫자는 허용하지 않습니다.")
-            print("입력 :", terminator: " ")
-            if let rawThreeNumbersInputByUser: String = readLine() {
-                let preprocessingThreeNumbersInputByUser: [String] = rawThreeNumbersInputByUser.split(separator: " ").map { String($0) }
-                for index in preprocessingThreeNumbersInputByUser {
-                    if let oneIntegerElementFromPreprocessingThreeNumbersInputByUser: Int = Int(index) {
-                        preprocessedThreeNumbersInputByUser.append(oneIntegerElementFromPreprocessingThreeNumbersInputByUser)
+    
+    func getAndPreprocessThreeNumbersInput() -> [Int] {
+        var preprocessedThreeNumbersInput = [Int]()
+        while Set(preprocessedThreeNumbersInput).count != 3 {
+            preprocessedThreeNumbersInput = [Int]()
+            print("""
+                        숫자 3개를 띄어쓰기로 구분하여 입력해주세요.
+                        중복숫자는 허용하지 않습니다.
+                        입력:
+                        """, terminator: "")
+            if let rawThreeNumbersInput: String = readLine() {
+                let preprocessingThreeNumbersInput: [String] = rawThreeNumbersInput.split(separator: " ").map { String($0) }
+                for index in preprocessingThreeNumbersInput {
+                    if let oneIntegerElementFromPreprocessingThreeNumbersInput: Int = Int(index) {
+                        preprocessedThreeNumbersInput.append(oneIntegerElementFromPreprocessingThreeNumbersInput)
+                    } else {
+                        print("입력이 잘못되었습니다.")
+                        break
                     }
                 }
             }
-            if preprocessedThreeNumbersInputByUser.count != 3 {
-                print("입력이 잘못되었습니다.")
-            }
         }
-        return preprocessedThreeNumbersInputByUser
+        return preprocessedThreeNumbersInput
     }
-
-    // 중복되지 않는 임의의 정수 3개 생성 함수
-    func generateThreeRandomUniqueNumbers() -> [Int] {
-        var threeRandomUniqueNumbers = [Int]()
-        while threeRandomUniqueNumbers.count < 3 {
-            let randomNumberToBeAppendedInThreeRandomUniqueNumbers: Int = Int.random(in: 1...9)
-            if threeRandomUniqueNumbers.contains(randomNumberToBeAppendedInThreeRandomUniqueNumbers) {
-                continue
-            } else {
-                threeRandomUniqueNumbers.append(randomNumberToBeAppendedInThreeRandomUniqueNumbers)
-            }
-        }
-        return threeRandomUniqueNumbers
-    }
-
-    // 스트라이크, 볼 판단 및 출력 함수
-    func checkStrikeOrBall(threeNumbersToCheckStrikeOrBall: [Int]) -> [Int] {
-        var strikeCount = 0
-        var ballCount = 0
-        remainingTryCount -= 1
-        for index in 0...2 {
-            if threeNumbersToCheckStrikeOrBall[index] == answerNumbers[index] {
-                strikeCount += 1
-            } else if answerNumbers.contains(threeNumbersToCheckStrikeOrBall[index]) {
-                ballCount += 1
-            }
-        }
-        print("\(strikeCount) 스트라이크, \(ballCount) 볼")
-        return [strikeCount, ballCount]
-    }
-
-    // remainingTryCount 또는 승자를 출력하는 함수
-    func printRemainingTryCountOrWhoWins(strikeCount: Int, remainingTryCount: Int) {
-        if strikeCount == 3 {
-            print("사용자 승리!")
-        } else if remainingTryCount == 0 {
-            print("컴퓨터 승리...!")
-        } else {
-            print("남은 기회 : \(remainingTryCount)")
-        }
-    }
-
-    // 게임 시작 함수
+    
+    /// 게임 시작 함수
     func startGame() {
-        var remainingTryCount: Int = 9
+        remainingTryCount = 9
         answerNumbers = generateThreeRandomUniqueNumbers()
         while remainingTryCount != 0 {
-            threeNumbersInputByUser = getAndPreprocessThreeNumbersInputByUser()
-            let ResultOfCheckStrikeOrBall: [Int] = checkStrikeOrBall(threeNumbersToCheckStrikeOrBall: threeNumbersInputByUser)
-            let strikeCountIndexInResultOfCheckStrikeOrBall: Int = 0
-            printRemainingTryCountOrWhoWins(strikeCount: ResultOfCheckStrikeOrBall[strikeCountIndexInResultOfCheckStrikeOrBall], remainingTryCount: remainingTryCount)
-            if threeNumbersInputByUser == answerNumbers {
+            threeNumbersInput = getAndPreprocessThreeNumbersInput()
+            let strikeCount: Int = checkStrikeOrBall(of: threeNumbersInput)
+            printGameStatueOrWinner(strikeCount: strikeCount, remainingTryCount: remainingTryCount)
+            if threeNumbersInput == answerNumbers {
                 break
             }
         }
@@ -115,4 +118,4 @@ class NumberBaseballGame {
 }
 
 let numberBaseballGame = NumberBaseballGame()
-numberBaseballGame.selectMenu()
+numberBaseballGame.selectGameMenu()
