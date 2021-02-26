@@ -9,7 +9,6 @@ import Foundation
 // 전역 변수 생성 (게임 중 사용자 입력, 정답 숫자, 잔여 시도 횟수)
 var threeNumbersInputByUser = [Int]()
 var answerNumbers = [Int]()
-var remainingTryCount: Int = 9
 
 class NumberBaseballGame {
     // 메뉴 출력 함수
@@ -101,7 +100,7 @@ class NumberBaseballGame {
 
     // 게임 시작 함수
     func startGame() {
-        remainingTryCount = 9
+        var remainingTryCount: Int = 9
         answerNumbers = generateThreeRandomUniqueNumbers()
         while remainingTryCount != 0 {
             threeNumbersInputByUser = getAndPreprocessThreeNumbersInputByUser()
