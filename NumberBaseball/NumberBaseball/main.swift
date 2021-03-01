@@ -119,3 +119,5 @@ class NumberBaseballGame {
 
 let numberBaseballGame = NumberBaseballGame()
 numberBaseballGame.selectGameMenu()
+
+var str = "Hello Playground"
